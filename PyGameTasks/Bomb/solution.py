@@ -3,7 +3,7 @@ from tools import load_image
 from random import randint
 
 
-class BombSprite(pygame.sprite.Sprite):
+class Bomb(pygame.sprite.Sprite):
     def __init__(self, *groups):
         super(BombSprite, self).__init__(*groups)
         self.image = load_image('bomb.png')
@@ -23,7 +23,7 @@ class BombSprite(pygame.sprite.Sprite):
 
 
 if __name__ == '__main__':
-    group = pygame.sprite.Group([BombSprite() for _ in range(30)])
+    group = pygame.sprite.Group([Bomb() for _ in range(30)])
 
     pygame.init()
     screen = pygame.display.set_mode((500, 500))
