@@ -6,7 +6,6 @@ class Cursor(ImageSprite):
     image = load_image('arrow.png')
 
     def __init__(self, pos, *groups):
-        x, y = pos
         super(Cursor, self).__init__(Cursor.image, pos, *groups)
 
     def update(self, event) -> None:
