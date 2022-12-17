@@ -1,0 +1,151 @@
+CREATE TABLE <name> ( - создать таблицу
+<имя поля> <доп параметры>
+)
+
+CREATE TABLE users (
+user_id INTEGER PRIMARY KEY,
+name TEXT,
+sex INTEGER DEFAULT 1 NOT NULL,
+old INTEGER,
+score INTEGER
+
+
+DROP TABLE <name> - удалить таблицу
+
+IF EXISTS - если такая таблица/поле существует
+
+------------------------------------------------------------------------------------------------------------------------
+INSERT INTO <table name> (<field1>, <field2>, <field3>) VALUES (<value1>, <value2>, <value3>) - добавить запись в таблицу
+
+SELECT <field1>, <field2>, <field3> FROM <table name> - получить запрошенные поля
+
+SELECT <field1>, <field2>, <field3> FROM <table name> WHERE <condition> - получить запрошенные поля, которые удовлетворяют условию
+можно использовать =, ==, >, <, >=, <=, !=, BETWEEN <condition>
+
+-CONDITIONS:
+ -AND - BETWEEN <num1> AND <num2>  !num1 < num2!      BETWEEN 500 AND 1000
+ -OR  - WHERE <field> == 5 OR <field> == 6
+ -NOT - NOT BETWEEN 500 AND 1000 преобразует ложь в истину, а истину в ложь
+ -IN  - field IN (val1, val2...)
+ -NOT IN - field NOT IN (val1, val2...)
+
+
+ORDER BY <field> <parameter> - отсортировать данные по заданным параметру
+параметры: DESK(по убыванию), ASC(по возрастанию)
+
+LIMIT <num1> [OFFSET <num2>] - из выбранных записей останутся первые <num1> записей, но первые <num2> записей будут пропущены
+LIMIT <offset(num2)>, <num1>
+------------------------------------------------------------------------------------------------------------------------
+
+UPDATE <table> SET <field1> = <value1>, <field2> = <value2> WHERE <condition> - обновить информацию в записи
+
+Example: UPDATE users SET score = 0 WHERE old > 15
+
+LIKE - то же самое, что ==           WHERE name LIKE 'Антон'
+
+Для WHERE можно в качестве условия поставить шаблон:
+-WHERE name LIKE 'М%' - % Означает, что после М может быть любое продолжение строки
+-WHERE name LIKE 'С_рг%' - оператор _ означает, что вместо него может быть любой символ
+
+
+DELETE FROM <table> WHERE <condition> - удалить запись из таблицы. Лучше всего использовать точныее данные, например rowid
+------------------------------------------------------------------------------------------------------------------------
+Агригирующие функции:
+-count() - вычислить количество возвращенных записей
+-sum() - подсчет суммы указанного поля по всем записям выборки
+-avg() - среднее арифметическое указанного поля
+-min() - нахождение минимального значение для указанного поля
+-max() - нахождение максимального значения значение для указанного поля
+
+SELECT count(DISTINCT user_id) FROM games
+
+
+
+GROUP BY <field> - сгруппировать данные по определенной группе
+
+SELECT user_id, sum(score) as score FROM games GROUP BY user_id
+------------------------------------------------------------------------------------------------------------------------
+
+
+JOIN <table> ON <условия связывания>
+
+SELECT name, sex, games.score FROM games JOIN users ON games.user_id = users.rowid
+
+Кроме того, можно не связывая, взять данные из нескольких таблиц:
+SELECT name, sex, games.score FROM users, games       !НО это не то же самое, что JOIN!
+
+По умолчанию, когда мы пишем JOIN, используется INNER JOIN, который проверяет, есть ли запрошенные данные в другой
+таблице и только при их наличии, возвращает запись, но мы можем сделать так, что бы и при не найденных данных, запрос
+выдавал их тоже(будет написано NULL)
+
+SELECT name, sex, sum(games.score) as score
+FROM games
+JOIN users ON games.user_id = users.rowid
+GROUP BY user_id
+ORDER BY score DESC
+
+Также можно использовать сразу несколько операторов JOIN для объединения данных из нескольких таблиц
+------------------------------------------------------------------------------------------------------------------------
+Python:
+
+commit() - подтверждает изменения, внесенные в БД, ВСЕГДА использовать по окончании программы
+close() - закрывает соединение с базой данных, ВСЕГДА использовать по окончании программы
+execute() - выполнить SQL запрос
+executemany() - то же самое, что пройтись циклом for по списку кортежей ("INSERT INTO cars VALUES(NULL, ?, ?), cars"), где cars- список, а "?" место, куда подставляются значения из списка
+executescript() - выполнить несколько запросов, запросы указываются через ";"
+rollback() - выполнить откат к исходному состоянию БД, при ошибочном SQL запросе. Для этого перед запросами следует использовать BEGIN;
+lastrowid() - получить id последнего добавленного элемента
+
+fetchall() - взять все записи, возвращенные БД
+fetchmany(num) - взять первые num записей, возвращенные БД
+fetchone() - взять только первую возвращенную запись
+
+если в начале программы написать connection.row_factory sq.Row, то возвращенные SELECT данные будут представлены в виде
+экземпляра касса Rows, а обращение к объектам можно осуществлять с помощью ключей(стандартное получение значения по ключу)
+
+cursor.execute("SELECT model, price FROM cars")
+
+for result in cursor:
+    print(result['model'], result['price]')
+
+
+Работа с изображениями:
+
+
+Запись в бд:
+
+def readAvatar(path)
+    with open(f'avatars/{path}.png', mode='rb) as file:
+        return file.read()
+
+img = readAvatar('name')
+if img:
+    binary = sqlite3.Binary(img)  - Преобразуем бинарные данные в данные, которые может хранить БД. Кроме того, хранятся они в BLOB поле
+    cursor.execute("INSERT INTO users VALUES ('Николай', ?", (binary,)) - записываем данные в БД
+
+Получение из бд:
+
+def writeAvatar(name, data):
+    with open(name, mode='wb') as file:
+        file.write(data)
+
+    return True
+
+cursor.execute("SELECT avatar FROM users LIMIT 1")
+img = cursor.fetchone()['avatar']
+
+writeAvatar("out.png", img) - изображение сохранится в файл
+
+
+При потере/поломки базы данных можно восстановить ее, если записывать все запросы куда-нибудь, например в файл
+
+SQLfile - файл, куда записывали все команды
+
+with open('SQLfile.sql', 'w') as file: - запись команд
+    for sql in connection.iterdump(): - iterdump возвращает все запросы, когда-либо исполненные для БД(только добавление и тд)
+        file.write(sql)
+
+with open('SQLfile.sql', 'r') as file: - воссоздание БД
+    sql = file.read()
+    cursor.executescript(sql)
+
