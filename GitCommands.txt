@@ -14,6 +14,8 @@ git status - информация по текущей ветке и состоя
 
 git add <filename> - сообщить гиту, что ему надо отслеживать этот файл
 
+git add -A - добавить все файлы
+
 git commit -m 'text' - закоммитить изменения
 
 git config --global user.email "developer@yandex.ru"

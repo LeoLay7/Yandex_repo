@@ -12,4 +12,3 @@ class ImageSprite(pygame.sprite.Sprite):
 
     def move(self, dx, dy):
         self.rect = self.rect.move(dx, dy)
-
