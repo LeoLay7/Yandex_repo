@@ -1,0 +1,11 @@
+mkdir git_repo2
+
+cd git_repo2
+
+echo 1 2 3 4 5 > numbers.txt
+
+git init
+
+git add numbers.txt
+
+git commit -a -m "Add file with numbers"

@@ -1,0 +1,39 @@
+mkdir git_repo2
+
+cd git_repo2
+
+echo 1 2 3 4 5 > numbers.txt
+
+git init
+
+git add numbers.txt
+
+git commit -a -m "Add file with numbers"
+
+git checkout -b "branch1234567"
+
+git checkout branch1234567
+
+echo 1 2 3 4 5 6 7 > file.txt
+
+git commit numbers.txt -m "Edit numbers.txt"
+
+git status
+
+git log
+
+git checkout master
+
+git branch "branch4567890"
+
+git checkout branch4567890
+
+echo 4 5 6 7 8 9 0 > numbers.txt
+
+git commit numbers.txt -m "Again edit numbers.txt"
+
+git checkout master
+
+git merge branch1234567
+
+git merge branch4567890
