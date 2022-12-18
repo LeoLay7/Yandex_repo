@@ -1,51 +1,14 @@
-import csv
+x1, y1, r1 = [int(x) for x in input().split()]
+x2, y2, r3 = [int(x) for x in input().split()]
 
+if x1 == x2:
+    S = abs(y1 - y2)
+elif y1 == y2:
+    S = abs(x1 - x2)
+else:
+    S = ((x1 - x2) ** 2 + (y1 - y1) ** 2) ** 0.5
 
-def multi_data(data):
-    res = []
-    for j in data.split(';'):
-        if j in process and process[j]:
-            res.append(int(process[j]))
-            # print(res)
-        else:
-            return None
-    return max(res)
-
-
-def steck(data):
-    if data in process and process[data]:
-        return process[data]
-    # print(data, datas[data])
-    try:
-        return max([steck(x) for x in datas[data]])
-    except KeyError:
-        return ''
-
-
-with open('aaa.csv', mode='r', encoding='windows-1251') as file:
-    headings = file.readline().replace('\n', '').split(';')
-    reader = csv.DictReader(file, fieldnames=headings, delimiter=';')
-
-    process = {'1': ''}
-    datas = {'1': ['0']}
-    # while not all([process[x] for x in process]):
-    for i in range(15):
-        for i in reader:
-            id = i['id']
-            data: str = i['data']
-            time = i['time']
-
-            if id not in process:
-                process[id] = ''
-                datas[id] = data.split(';')
-            if data == '0':
-                process[id] = time
-            elif data.count(';') == 0:
-                if data in process and process[data]:
-                    process[id] = process[data]
-            elif data.count(';') > 0:
-                process[id] = steck(id)
-
-print([datas[x] for x in process.keys() if not process[x]])
-
-print(process)
+if S <= r1 + r3:
+    print('YES')
+else:
+    print('NO')
